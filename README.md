@@ -1,8 +1,8 @@
 # Streaming locator app
 Find your favorite media streams.
 
-### Go stick a note
-https://sticky-notes-react-js.vercel.app/
+### Find a stream
+https://streaming-locator.vercel.app/
 
 
 #### Icons used
