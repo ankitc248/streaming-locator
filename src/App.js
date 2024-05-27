@@ -12,7 +12,7 @@ function App() {
   const WATCHMODE_API_URL = "https://api.watchmode.com/v1";
   const minimumSearchLength = 2;
   const [search, setSearch] = useState("");
-  const [searchPlaceholder, setSearchPlaceholder] = useState("Search");
+  const [searchPlaceholder, setSearchPlaceholder] = useState("Severance");
   const [searched, setSearched] = useState(false);
   const [mediaID, setMediaID] = useState(0);
   const [networkError, setNetworkError] = useState();
@@ -141,12 +141,16 @@ function App() {
       if (error.response) {
         errorMessage = `Error: ${error.response.status} - ${error.response.statusText}`;
         headers = error.response.headers;
+        if(error.response.data.statusCode === 404) 
+          return {
+            success: true,
+            data: [],
+          };
       } else if (error.request) {
         errorMessage = "Error: No response received from the server.";
       } else {
         errorMessage = `Error: ${error.message}`;
       }
-      errorMessage = "Facing network issues. Please try again later.";
       return {
         success: false,
         message: errorMessage,
@@ -173,7 +177,7 @@ function App() {
       } else {
         errorMessage = `Error: ${error.message}`;
       }
-      errorMessage = "Facing network issues. Please try again later.";
+      errorMessage = "Facing network issues from our side. Please try again later.";
       return {
         success: false,
         message: errorMessage,
@@ -222,7 +226,7 @@ function App() {
             <div className="search-results scrollable">
               {networkError && (
                 <div className="no-results">
-                  Facing network issues. Please try again later.
+                  Facing network issues from our side. Please try again later.
                 </div>
               )}
               {searchResults.length ? (
@@ -270,7 +274,7 @@ const StreamingResults = ({ values }) => {
     <>
       {values && values.length > 0 && (
         <h2 className="stream-count">
-          Found {values.length} streaming providers
+          Found {values.length} streaming {values.length > 1 ? "providers" : "provider"}
         </h2>
       )}
       <motion.div className="streaming-results">

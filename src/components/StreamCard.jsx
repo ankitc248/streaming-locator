@@ -20,7 +20,6 @@ const StreamCard = ({ values, index }) => {
       className="stream-card"
       initial={{ y: 50, opacity: 0 }}
       animate={{ y: 0, opacity: 1 }}
-      whileHover={{ y: -5 }}
       transition={{ duration: 0.25, delay: index * 0.25 }}
     >
       <div className="title">
@@ -87,7 +86,7 @@ const StreamCard = ({ values, index }) => {
               setTooltipVisible(true);
             }}
           >
-            &#10532;
+            <img src="assets/media-icons/youtube-tv.svg" alt="watch now" className="icon svg"/>
           </a>
         </span>
       </div>
