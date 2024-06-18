@@ -14,18 +14,12 @@ const MediaCard = ({ values }) => {
   const moreDetailsVariants = {
     hidden: {
       opacity: 0,
-      y: -10,
     },
     visible: {
       opacity: 1,
-      y: 0,
       transition: {
         staggerChildren: 0.1,
       },
-    },
-    exit: {
-      opacity: 0,
-      y: -10,
     },
   };
 
@@ -92,7 +86,7 @@ const MediaCard = ({ values }) => {
                 variants={moreDetailsVariants}
                 initial="hidden"
                 animate="visible"
-                exit="exit"
+                transition={{ duration: 0.5 }}
               >
                 {values.duration && (
                   <motion.span className="detail" variants={detailVariants}>

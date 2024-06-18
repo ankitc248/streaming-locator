@@ -27,6 +27,7 @@
   opacity: 0;
   z-index: -1;
   transition: all 0.5s ease;
+  box-shadow: 0 100dvh black;
 }
 
 .App:has(.search-input:valid) .focus-background,
@@ -234,18 +235,21 @@ button {
 .search-results {
   position: absolute;
   width: 100%;
-  background-color: #111927;
-  background-image:
+  background-color: #111;
+  /* background-image:
     radial-gradient(at 47% 33%, var(--orange-web) 0, transparent 59%),
-    radial-gradient(at 82% 65%, var(--rosewood) 0, transparent 55%);
+    radial-gradient(at 82% 65%, var(--rosewood) 0, transparent 55%); */
   border-radius: 0 0 12px 12px;
-  border: 1px solid rgba(255, 255, 255, 0.125);
+  border: 2px solid rgba(255, 255, 255, 0.125);
+  border-top-width: 1px;
   overflow: hidden;
   overflow-y: auto;
   max-height: 60dvh;
   scroll-behavior: smooth;
 }
-
+.search-result:last-child {
+  border-bottom: none;
+}
 .scrollable::-webkit-scrollbar {
   width: 8px;
 }
@@ -277,8 +281,8 @@ button {
   padding: 1rem;
   backdrop-filter: blur(16px) saturate(180%);
   -webkit-backdrop-filter: blur(16px) saturate(180%);
-  background-color: rgba(17, 25, 40, 0.75);
-  box-shadow: 0px 2px 8px black;
+  /* background-color: rgba(17, 25, 40, 0.75); */
+  /* box-shadow: 0px 2px 8px black; */
   min-height: 100px;
   border-bottom: 1px solid rgba(255, 255, 255, 0.125);
   transition: all 0.2s ease;
@@ -681,7 +685,7 @@ button {
 .stream-card .title .text {
   display: flex;
   justify-content: center;
-  padding: 0.2rem 1rem;
+  padding: 0.5rem 1rem;
 }
 
 .stream-card .details>* {
@@ -749,7 +753,9 @@ button {
   visibility: visible;
   opacity: 1;
 }
-
+.details .link{
+  background-color: rgba(255, 255, 255, 0.2);
+}
 @media screen and (max-width: 600px) {
   .stream-card .details>* {
     padding: 0.5rem;
