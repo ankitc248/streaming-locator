@@ -125,6 +125,7 @@ button {
     radial-gradient(at 47% 33%, var(--orange-web) 0, transparent 59%),
     radial-gradient(at 82% 65%, var(--rosewood) 0, transparent 55%);
   border-radius: 12px;
+  box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.5);
 }
 
 .search-box.searched .search-input {
