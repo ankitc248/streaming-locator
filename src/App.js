@@ -233,9 +233,7 @@ function App() {
                 searchResults.map((result) => {
                   if (
                     Object.keys(result).includes("#YEAR") &&
-                    Object.keys(result).includes("#ACTORS") &&
-                    result["#ACTORS"] !== "" &&
-                    Object.keys(result).includes("#IMG_POSTER")
+                    Object.keys(result).includes("#TITLE")
                   ) {
                     return (
                       <SearchResult
