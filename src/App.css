@@ -12,6 +12,12 @@
   --font-white: hsla(0, 0%, 100%, 1);
 }
 
+#root {
+  background-image: radial-gradient(#000 2px, transparent 2px);
+  background-size: 4px 4px;
+  background-color: transparent;
+}
+
 .App {
   width: 100%;
   display: flex;
