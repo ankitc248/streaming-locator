@@ -13,6 +13,9 @@ body {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   background-color: var(--rich-black);
+  background-image:
+    radial-gradient(at 5% 35%, var(--orange-web) 0, transparent 50%),
+    radial-gradient(at 70% 35%, var(--rosewood) 0, transparent 50%);
   min-height: 100dvh;
   color: var(--font-white);
 }

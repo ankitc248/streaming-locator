@@ -1,11 +1,13 @@
 import "./App.css";
-import { AnimatePresence, delay, motion } from "framer-motion";
+import { AnimatePresence, motion } from "framer-motion";
 import { useEffect, useRef, useState } from "react";
 import axios from "axios";
 import MediaCard from "./components/MediaCard";
 import StreamCard from "./components/StreamCard";
 import SearchResult from "./components/SearchResult";
 import NetworkError from "./components/NetworkError";
+import SearchHistory from "./components/SearchHistory";
+import useLocalStorage from "use-local-storage";
 function App() {
   const IMDB_API_URL = "https://search.imdbot.workers.dev";
   const WATCHMODE_API_KEY = "VLXzZRPpfTpvjWdqU4Rj8ZIFTzDJn1fq2iFjrrJ2";
@@ -23,7 +25,9 @@ function App() {
   const [isLoading, setIsLoading] = useState(false);
   const [streamsLoading, setStreamsLoading] = useState(false);
   const [showResults, setShowResults] = useState(false);
-
+  const [showHistory, setShowHistory] = useState(true);
+  const [searchHistory, setSearchHistory] = useLocalStorage("searchHistory", []);
+  const searchInput = useRef(null);
   useEffect(() => {
     const placeholderValues = [
       "The Godfather",
@@ -37,7 +41,7 @@ function App() {
       do {
         newPlaceholder =
           placeholderValues[
-            Math.floor(Math.random() * placeholderValues.length)
+          Math.floor(Math.random() * placeholderValues.length)
           ];
       } while (newPlaceholder === searchPlaceholder);
       setSearchPlaceholder(newPlaceholder);
@@ -51,6 +55,13 @@ function App() {
         setShowResults(false);
       }
     });
+    return () => {
+      document.body.removeEventListener("click", (e) => {
+        if (!e.target.closest(".search-container")) {
+          setShowResults(false);
+        }
+      });
+    };
   });
 
   const handleSearch = (e) => {
@@ -75,10 +86,14 @@ function App() {
   };
 
   const handleInputFocus = (e) => {
-    if (e.target.value.length >= minimumSearchLength) setShowResults(true);
+    // setShowHistory(false);
+    if (e.target.value.length >= minimumSearchLength) {
+      setShowResults(true);
+    }
   };
 
   const debouncedSearch = (searchText) => {
+    // setShowHistory(false);
     setIsLoading(true);
     if (debounceTimeout.current) {
       clearTimeout(debounceTimeout.current);
@@ -104,12 +119,13 @@ function App() {
 
   const handleResultClick = async (data) => {
     setShowResults(false);
+    // setShowHistory(false);
     setStreamsLoading(true);
     setSearch(data["#TITLE"]);
     setSearched(true);
     const newMediaID = data["#IMDB_ID"];
     setMediaID(newMediaID);
-    const mediaDetailsResponse = await performMediaDetailsSearch(newMediaID);
+    const mediaDetailsResponse = await performMediaDetailsSearch(newMediaID, data["#TITLE"]);
     if (mediaDetailsResponse.success) {
       const streamingResponse = await performStreamsSearch(newMediaID);
       if (streamingResponse.success) {
@@ -141,7 +157,7 @@ function App() {
       if (error.response) {
         errorMessage = `Error: ${error.response.status} - ${error.response.statusText}`;
         headers = error.response.headers;
-        if(error.response.data.statusCode === 404) 
+        if (error.response.data.statusCode === 404)
           return {
             success: true,
             data: [],
@@ -159,9 +175,15 @@ function App() {
     }
   };
 
-  const performMediaDetailsSearch = async (id) => {
+  const handleHistoryItemClick = (e, id, name) => {
+    const data = { "#TITLE": name, "#IMDB_ID": id };
+    handleResultClick(data);
+  };
+
+  const performMediaDetailsSearch = async (id, name = "") => {
     try {
       const response = await axios.get(`${IMDB_API_URL}/?tt=${id}`);
+      addToSearchHistory(name, id);
       return {
         success: true,
         data: response.data,
@@ -186,6 +208,32 @@ function App() {
     }
   };
 
+  const addToSearchHistory = (name, id) => {
+    if (name.trim() !== '') {
+      const existingIndex = searchHistory.findIndex(item => item.imdbID === id);
+      let updatedHistory;
+
+      if (existingIndex !== -1) {
+        // Remove the old entry
+        updatedHistory = [
+          ...searchHistory.slice(0, existingIndex),
+          ...searchHistory.slice(existingIndex + 1)
+        ];
+      } else {
+        updatedHistory = [...searchHistory];
+      }
+
+      // Add the new entry at the beginning
+      const newEntry = { name, imdbID: id };
+      if (updatedHistory.length >= 5) {
+        updatedHistory = [newEntry, ...updatedHistory.slice(0, 4)];
+      } else {
+        updatedHistory = [newEntry, ...updatedHistory];
+      }
+
+      setSearchHistory(updatedHistory);
+    }
+  }
   return (
     <div className="App">
       <div className="focus-background"></div>
@@ -202,6 +250,7 @@ function App() {
               value={search}
               required
               disabled={searched}
+              ref={searchInput}
             />
             <span className={`loading-icon ${!isLoading ? "hide" : ""}`}>
               <span className="loader"></span>
@@ -250,6 +299,7 @@ function App() {
               )}
             </div>
           )}
+          {showHistory && <SearchHistory onClick={() => searchInput.current.onFocus()} history={searchHistory} onHistoryItemClick={handleHistoryItemClick} setSearchHistory={setSearchHistory} />}
         </div>
         <div className="streaming-container">
           <span className={`loading-icon ${!streamsLoading ? "hide" : ""}`}>
@@ -295,8 +345,8 @@ const StreamingResults = ({ values }) => {
         )}
         {values && values.length
           ? values.map((source, index) => (
-              <StreamCard values={source} key={index} index={index} />
-            ))
+            <StreamCard values={source} key={index} index={index} />
+          ))
           : null}
       </motion.div>
     </>

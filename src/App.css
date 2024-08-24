@@ -13,7 +13,7 @@
 }
 
 #root {
-  background-image: radial-gradient(#000 2px, transparent 2px);
+  background-image: radial-gradient(#000 2px, rgba(0, 0, 0, 0.5) 2px);
   background-size: 4px 4px;
   background-color: transparent;
 }
@@ -40,6 +40,12 @@
 .App:has(.search-input:focus) .focus-background {
   opacity: 1;
   z-index: 5;
+}
+
+.App:has(.search-input:valid) .search-history,
+.App:has(.search-input:focus) .search-history,
+.App:has(.search-box.searched) .search-history {
+  display: none;
 }
 
 .app-container {
@@ -119,6 +125,7 @@ button {
   top: 7dvh;
 }
 
+
 .search-input:focus,
 .search-input:valid {
   top: 7dvh;
@@ -126,11 +133,12 @@ button {
 
 .search-box {
   position: relative;
-  background-color: #111927;
-  background-image:
+  background-color: rgba(255, 255, 255, 0.35);
+  /* background-image:
     radial-gradient(at 47% 33%, var(--orange-web) 0, transparent 59%),
-    radial-gradient(at 82% 65%, var(--rosewood) 0, transparent 55%);
+    radial-gradient(at 82% 65%, var(--rosewood) 0, transparent 55%); */
   border-radius: 12px;
+  z-index: 7;
   box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.5);
 }
 
@@ -166,7 +174,9 @@ button {
   letter-spacing: 0.5px;
   font-weight: 600;
   font-size: 14px;
+  z-index: 10;
   padding: 0.25rem 1rem;
+  box-shadow: 2px -2px 4px rgba(0, 0, 0, 0.75);
 }
 
 .loading-icon {
@@ -623,6 +633,7 @@ button {
   text-overflow: ellipsis;
   display: -webkit-box;
   -webkit-line-clamp: 3;
+  line-clamp: 3;
   -webkit-box-orient: vertical;
   color: #ddd;
   margin-block: 0.25rem;
@@ -630,6 +641,7 @@ button {
 
 .more-details-active .description {
   -webkit-line-clamp: unset;
+  line-clamp: unset;
 }
 
 .streaming-results {
@@ -793,4 +805,56 @@ button {
   .search-result-media {
     display: none;
   }
+}
+
+.search-history {
+  position: absolute;
+  top: 80%;
+  left: 0;
+  right: 0;
+  background-color: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(5px);
+  border-radius: 0 0 12px 12px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  z-index: 6;
+  display: flex;
+  flex-direction: column;
+  border: solid 2px rgba(255, 255, 255, 0.25);
+  align-items: flex-end;
+
+  ul {
+    padding: 0;
+    width: 100%;
+    margin-bottom: 0;
+  }
+
+  .icon {
+    filter: invert(1) brightness(50%);
+    margin-right: 0.5rem;
+  }
+}
+
+.search-history-item {
+  padding: 0.75rem 1rem;
+  color: #999;
+  font-size: 1rem;
+  transition: background-color 0.2s ease;
+  cursor: pointer;
+  border-bottom: solid 1px rgba(255, 255, 255, 0.2);
+}
+
+.search-history-item:first-child {
+  padding-top: 1rem;
+}
+
+.search-history-item:hover {
+  background-color: rgba(255, 255, 255, 0.1);
+}
+
+.clear-search-history {
+  cursor: pointer;
+  display: flex;
+  justify-content: space-between;
+  color: #555;
+  border-bottom: 0;
 }
