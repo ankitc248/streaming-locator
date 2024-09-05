@@ -20,7 +20,7 @@ const StreamCard = ({ values, index }) => {
       className="stream-card"
       initial={{ y: 50, opacity: 0 }}
       animate={{ y: 0, opacity: 1 }}
-      transition={{ duration: 0.25, delay: index * 0.25 }}
+      transition={{ duration: 0.25, delay: index * 0.1 }}
     >
       <div className="title">
         <span className="text">{values.name}</span>

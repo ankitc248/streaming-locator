@@ -1,6 +1,6 @@
 # Streaming Locator App
 
-![Preview](preview.jpg)
+![Preview](preview.png)
 
 ## Overview
 

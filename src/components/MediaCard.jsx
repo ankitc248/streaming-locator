@@ -51,27 +51,30 @@ const MediaCard = ({ values }) => {
         <span className="blur-overlay"></span>
       </div>
       <div className="body">
-        
-      <div className="search-result-media">
-        <div className="search-image-container">
-          <div
-            className={`search-result-image-loader opacity-1 ${
-              !values.image ? "stop-flashing" : ""
-            }`}
-          ></div>
-          <img
-            onLoad={handleImageLoad}
-            src={values.image}
-            alt="media"
-            loading="lazy"
-          />
+        <div className="search-result-media">
+          <div className="search-image-container">
+            <div
+              className={`search-result-image-loader opacity-1 ${
+                !values.image ? "stop-flashing" : ""
+              }`}
+            ></div>
+            <img
+              onLoad={handleImageLoad}
+              src={values.image}
+              alt="media"
+              loading="lazy"
+            />
+          </div>
         </div>
-      </div>
         <div className="info">
-          <span className="title">{values.name}</span>
+          <span className="title">{values.realName}</span>
           <span className="genres">
             {values.genre.map((genre) => {
-              return <span className="genre" key={genre}>{genre}</span>;
+              return (
+                <span className="genre" key={genre}>
+                  {genre}
+                </span>
+              );
             })}
           </span>
           {values.description && (
@@ -181,13 +184,13 @@ const MediaCard = ({ values }) => {
                 className="icon svg"
               ></img>
             )}
-            {values["@type"] === "TVEpisode" &&
+            {values["@type"] === "TVEpisode" && (
               <img
                 src="assets/media-icons/tv-television.svg"
                 alt="series"
                 className="icon svg"
               ></img>
-            }
+            )}
           </div>
           <div>
             <button

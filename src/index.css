@@ -4,6 +4,7 @@
 }
 *{
   box-sizing: border-box;
+  font-family: inherit;
 }
 body {
   margin: 0;
@@ -18,11 +19,4 @@ body {
     radial-gradient(at 70% 35%, var(--rosewood) 0, transparent 50%);
   min-height: 100dvh;
   color: var(--font-white);
-}
-*{
-  font-family: inherit;
-}
-code {
-  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
-    monospace;
 }

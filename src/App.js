@@ -8,10 +8,10 @@ import SearchResult from "./components/SearchResult";
 import NetworkError from "./components/NetworkError";
 import SearchHistory from "./components/SearchHistory";
 import useLocalStorage from "use-local-storage";
+const IMDB_API_URL = "https://search.imdbot.workers.dev";
+const WATCHMODE_API_KEY = "VLXzZRPpfTpvjWdqU4Rj8ZIFTzDJn1fq2iFjrrJ2";
+const WATCHMODE_API_URL = "https://api.watchmode.com/v1";
 function App() {
-  const IMDB_API_URL = "https://search.imdbot.workers.dev";
-  const WATCHMODE_API_KEY = "VLXzZRPpfTpvjWdqU4Rj8ZIFTzDJn1fq2iFjrrJ2";
-  const WATCHMODE_API_URL = "https://api.watchmode.com/v1";
   const minimumSearchLength = 2;
   const [search, setSearch] = useState("");
   const [searchPlaceholder, setSearchPlaceholder] = useState("Severance");
@@ -26,7 +26,10 @@ function App() {
   const [streamsLoading, setStreamsLoading] = useState(false);
   const [showResults, setShowResults] = useState(false);
   const [showHistory, setShowHistory] = useState(true);
-  const [searchHistory, setSearchHistory] = useLocalStorage("searchHistory", []);
+  const [searchHistory, setSearchHistory] = useLocalStorage(
+    "searchHistory",
+    []
+  );
   const searchInput = useRef(null);
   useEffect(() => {
     const placeholderValues = [
@@ -41,7 +44,7 @@ function App() {
       do {
         newPlaceholder =
           placeholderValues[
-          Math.floor(Math.random() * placeholderValues.length)
+            Math.floor(Math.random() * placeholderValues.length)
           ];
       } while (newPlaceholder === searchPlaceholder);
       setSearchPlaceholder(newPlaceholder);
@@ -121,15 +124,19 @@ function App() {
     setShowResults(false);
     // setShowHistory(false);
     setStreamsLoading(true);
-    setSearch(data["#TITLE"]);
+    setSearch(data["#AKA"]);
     setSearched(true);
     const newMediaID = data["#IMDB_ID"];
     setMediaID(newMediaID);
-    const mediaDetailsResponse = await performMediaDetailsSearch(newMediaID, data["#TITLE"]);
+    const mediaDetailsResponse = await performMediaDetailsSearch(
+      newMediaID,
+      data["#AKA"]
+    );
     if (mediaDetailsResponse.success) {
       const streamingResponse = await performStreamsSearch(newMediaID);
       if (streamingResponse.success) {
         streamingResponse.data = mergeBySourceId(streamingResponse.data);
+        mediaDetailsResponse.data.short.realName = data["#AKA"];
         mediaDetailsResponse &&
           setMediaDetails(mediaDetailsResponse.data.short);
         streamingResponse && setStreamingResults(streamingResponse.data);
@@ -176,7 +183,7 @@ function App() {
   };
 
   const handleHistoryItemClick = (e, id, name) => {
-    const data = { "#TITLE": name, "#IMDB_ID": id };
+    const data = { "#AKA": name, "#IMDB_ID": id };
     handleResultClick(data);
   };
 
@@ -199,7 +206,8 @@ function App() {
       } else {
         errorMessage = `Error: ${error.message}`;
       }
-      errorMessage = "Facing network issues from our side. Please try again later.";
+      errorMessage =
+        "Facing network issues from our side. Please try again later.";
       return {
         success: false,
         message: errorMessage,
@@ -209,15 +217,17 @@ function App() {
   };
 
   const addToSearchHistory = (name, id) => {
-    if (name.trim() !== '') {
-      const existingIndex = searchHistory.findIndex(item => item.imdbID === id);
+    if (name.trim() !== "") {
+      const existingIndex = searchHistory.findIndex(
+        (item) => item.imdbID === id
+      );
       let updatedHistory;
 
       if (existingIndex !== -1) {
         // Remove the old entry
         updatedHistory = [
           ...searchHistory.slice(0, existingIndex),
-          ...searchHistory.slice(existingIndex + 1)
+          ...searchHistory.slice(existingIndex + 1),
         ];
       } else {
         updatedHistory = [...searchHistory];
@@ -233,7 +243,7 @@ function App() {
 
       setSearchHistory(updatedHistory);
     }
-  }
+  };
   return (
     <div className="App">
       <div className="focus-background"></div>
@@ -282,7 +292,7 @@ function App() {
                 searchResults.map((result) => {
                   if (
                     Object.keys(result).includes("#YEAR") &&
-                    Object.keys(result).includes("#TITLE")
+                    Object.keys(result).includes("#AKA")
                   ) {
                     return (
                       <SearchResult
@@ -299,7 +309,14 @@ function App() {
               )}
             </div>
           )}
-          {showHistory && <SearchHistory onClick={() => searchInput.current.onFocus()} history={searchHistory} onHistoryItemClick={handleHistoryItemClick} setSearchHistory={setSearchHistory} />}
+          {showHistory && (
+            <SearchHistory
+              onClick={() => searchInput.current.onFocus()}
+              history={searchHistory}
+              onHistoryItemClick={handleHistoryItemClick}
+              setSearchHistory={setSearchHistory}
+            />
+          )}
         </div>
         <div className="streaming-container">
           <span className={`loading-icon ${!streamsLoading ? "hide" : ""}`}>
@@ -322,7 +339,8 @@ const StreamingResults = ({ values }) => {
     <>
       {values && values.length > 0 && (
         <h2 className="stream-count">
-          Found {values.length} streaming {values.length > 1 ? "providers" : "provider"}
+          Found {values.length} streaming{" "}
+          {values.length > 1 ? "providers" : "provider"}
         </h2>
       )}
       <motion.div className="streaming-results">
@@ -345,8 +363,8 @@ const StreamingResults = ({ values }) => {
         )}
         {values && values.length
           ? values.map((source, index) => (
-            <StreamCard values={source} key={index} index={index} />
-          ))
+              <StreamCard values={source} key={index} index={index} />
+            ))
           : null}
       </motion.div>
     </>
